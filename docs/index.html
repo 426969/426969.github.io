@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>426969</title>
+    <meta name="description" content="426969" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: black;
+        color: white;
+      }
+
+      #starfield {
+        top: 0;
+        left: 0;
+        position: fixed;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <canvas id="starfield" aria-label="Generative starfield artwork canvas">
+        426969
+      </canvas>
+      <noscript>
+        <p>426969</p>
+      </noscript>
+    </main>
+    <script defer type="module">
+      const TAU = Math.PI * 2;
+      const NUM_STARS = 420;
+      const RENDER_SCALE = 0.69;
+      const FPS = 42;
+      const frameDuration = 1000 / FPS;
+      const angles = new Float32Array(NUM_STARS);
+      const radii = new Float32Array(NUM_STARS);
+      const speeds = new Float32Array(NUM_STARS);
+      const sizes = new Float32Array(NUM_STARS);
+      const randomness = new Float32Array(NUM_STARS);
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d');
+
+      let lastTime = 0;
+
+      for (let i = 0; i < NUM_STARS; i++) {
+        randomness[i] = Math.random();
+      }
+
+      function resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const wRender = w * RENDER_SCALE;
+        const hRender = h * RENDER_SCALE;
+        const maxR = Math.hypot(wRender, hRender);
+
+        canvas.width = wRender;
+        canvas.height = hRender;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+
+        for (let i = 0; i < NUM_STARS; i++) {
+          const rnd = randomness[i];
+          const invRnd = randomness[NUM_STARS - i];
+          const r = rnd * maxR;
+
+          angles[i] = invRnd * TAU;
+          radii[i] = r;
+          speeds[i] = 0.0069 * rnd + 0.0069 * invRnd;
+          sizes[i] = 0.42 * 4.2 * rnd ** 0.69;
+        }
+      }
+
+      function animate() {
+        const now = performance.now();
+        const delta = now - lastTime;
+        if (delta < frameDuration) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        const w = canvas.width;
+        const h = canvas.height;
+
+        lastTime = now - (delta % frameDuration);
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.beginPath();
+        for (let i = 0; i < NUM_STARS; i++) {
+          const r = radii[i];
+          const sz = sizes[i] * Math.abs(Math.sin(0.00069 * now + i));
+          const x = w / 2 + r * Math.cos(angles[i]);
+          const y = h / 2 + r * Math.sin(angles[i]);
+
+          angles[i] += 0.0069 * delta * speeds[i] * randomness[i];
+
+          ctx.fillStyle = 'white';
+          ctx.moveTo(x, y);
+          ctx.arc(x, y, sz, 0, TAU);
+        }
+        ctx.fill();
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+
+      resize();
+      requestAnimationFrame(animate);
+    </script>
+  </body>
+</html>
